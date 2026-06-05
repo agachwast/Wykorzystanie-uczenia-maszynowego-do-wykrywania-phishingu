@@ -1,22 +1,17 @@
-from scipy import sparse
-import joblib
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
+import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, ConfusionMatrixDisplay
 
-def train_rf(X, y, test_size=0.2, random_state=42, return_model=False):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state, stratify=y
-    )
+
+def train_rf(X_train, y_train, X_test, y_test, return_model=False):
 
     rf = RandomForestClassifier(
         n_estimators=200,
-        random_state=random_state,
+        random_state=42,
         n_jobs=-1,
         class_weight="balanced"
     )
@@ -24,26 +19,30 @@ def train_rf(X, y, test_size=0.2, random_state=42, return_model=False):
     rf.fit(X_train, y_train)
 
     y_pred = rf.predict(X_test)
+
     acc = accuracy_score(y_test, y_pred)
     f1_w = f1_score(y_test, y_pred, average="weighted")
     f1_m = f1_score(y_test, y_pred, average="macro")
 
     if return_model:
         return acc, f1_w, f1_m, rf
-    else:
-        return acc, f1_w, f1_m
+    return acc, f1_w, f1_m
 
 
-def evaluate_model(X, y, embedding_name, return_model=True):
-    acc, f1_w, f1_m, rf = train_rf(X, y, return_model=return_model)
+def evaluate_model(X_train, X_test, y_train, y_test, embedding_name):
+
+    acc, f1_w, f1_m, rf = train_rf(
+        X_train, y_train, X_test, y_test,
+        return_model=True
+    )
+
     print(f"{embedding_name} Done: Accuracy={acc:.3f}, F1_macro={f1_m:.3f}")
+
     return rf, acc, f1_w, f1_m
 
 
-def get_confusion_matrix(rf, X, y, embedding_name):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+def get_confusion_matrix(rf, X_test, y_test, embedding_name):
+
     y_pred = rf.predict(X_test)
     cm = confusion_matrix(y_test, y_pred)
 
@@ -60,7 +59,6 @@ def get_confusion_matrix(rf, X, y, embedding_name):
     plt.show()
 
     return cm_df
-
 
 def get_top_features(rf_tfidf, tfidf_feature_names, top_n=20):
     importances = rf_tfidf.feature_importances_
