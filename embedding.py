@@ -9,7 +9,6 @@ def getBowEmbeddings(texts, max_features=5000):
 
     vectorizer = CountVectorizer(
         max_features=max_features,
-        stop_words='english',
     )
 
     X_bow = vectorizer.fit_transform(texts)
@@ -20,7 +19,6 @@ def getTfidfEmbeddings(texts, max_features=5000):
 
     vectorizer = TfidfVectorizer(
         max_features=max_features,
-        stop_words="english"
     )
     X_tfidf = vectorizer.fit_transform(texts)
     return X_tfidf, vectorizer
