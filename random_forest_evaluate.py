@@ -67,7 +67,7 @@ def get_top_features(rf_tfidf, tfidf_feature_names, top_n=20):
         "importance": importances
     }).sort_values("importance", ascending=False)
     top20 = feat_df.head(top_n)
-    print("\nTop TF-IDF Features:")
+    print("\nTop Features:")
     print(top20)
     return top20
 
