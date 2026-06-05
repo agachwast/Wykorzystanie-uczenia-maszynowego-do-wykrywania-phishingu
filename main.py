@@ -60,7 +60,6 @@ def main():
     rf_tfidf_light, cm_tfidf_light = run_experiment(X_tfidf_light, y, "TFIDF_light", results)
     rf_bow_light, cm_bow_light = run_experiment(X_bow_light, y, "BoW_light", results)
 
-    # --- SHAP (tylko BoW light) ---
     top_features_bow_light = get_top_features(rf_bow_light, feature_names)
 
     X_bow_dense = X_bow_light.toarray()
